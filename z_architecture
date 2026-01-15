@@ -1,0 +1,66 @@
+prepmetrics/
+├── backend/
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Subject.js
+│   │   ├── Topic.js
+│   │   ├── Question.js
+│   │   ├── Quiz.js
+│   │   └── Certificate.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── users.js
+│   │   ├── subjects.js
+│   │   ├── topics.js
+│   │   ├── questions.js
+│   │   ├── quizzes.js
+│   │   ├── analytics.js
+│   │   ├── leaderboard.js
+│   │   ├── certificates.js
+│   │   └── admin.js
+│   ├── middleware/
+│   │   └── auth.js
+│   ├── utils/
+│   │   └── analytics.js
+│   ├── server.js
+│   ├── package.json
+│   └── .env
+└── frontend/
+    ├── src/
+    │   ├── components/
+    │   │   ├── layout/
+    │   │   │   └── Navbar.js
+    │   │   └── auth/
+    │   │       ├── PrivateRoute.js
+    │   │       └── AdminRoute.js
+    │   ├── pages/
+    │   │   ├── auth/
+    │   │   │   ├── Login.js
+    │   │   │   └── Register.js
+    │   │   ├── user/
+    │   │   │   ├── Dashboard.js
+    │   │   │   └── Profile.js
+    │   │   ├── subjects/
+    │   │   │   └── SubjectList.js
+    │   │   ├── quiz/
+    │   │   │   ├── QuizSetup.js
+    │   │   │   ├── QuizInterface.js
+    │   │   │   └── QuizResults.js
+    │   │   ├── analytics/
+    │   │   │   ├── Analytics.js
+    │   │   │   └── SubjectAnalytics.js
+    │   │   ├── leaderboard/
+    │   │   │   └── Leaderboard.js
+    │   │   ├── certificates/
+    │   │   │   └── Certificates.js
+    │   │   └── admin/
+    │   │       ├── AdminDashboard.js
+    │   │       └── QuestionManagement.js
+    │   ├── context/
+    │   │   ├── AuthContext.js
+    │   │   └── ThemeContext.js
+    │   ├── App.js
+    │   ├── index.js
+    │   └── App.css
+    ├── package.json
+    └── .env
