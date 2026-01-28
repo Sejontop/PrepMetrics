@@ -1,0 +1,194 @@
+/* src/pages/leaderboard/Leaderboard.css */
+.leaderboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.leaderboard-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.leaderboard-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.my-rank-card {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  padding: 2rem;
+  border-radius: var(--radius);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.my-rank-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.my-rank-number {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.my-rank-total {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.my-rank-percentile {
+  text-align: center;
+}
+
+.percentile-label {
+  display: block;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.percentile-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.filter-section {
+  background: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.filter-section label {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filter-btn {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.filter-btn:hover {
+  border-color: var(--primary-color);
+}
+
+.filter-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.leaderboard-table-container {
+  background: var(--bg-primary);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table thead {
+  background: var(--bg-secondary);
+}
+
+.leaderboard-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.leaderboard-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.leaderboard-table tr:hover {
+  background: var(--bg-secondary);
+}
+
+.rank-cell {
+  font-weight: 700;
+}
+
+.rank-badge {
+  font-size: 1.5rem;
+}
+
+.rank-gold { background: linear-gradient(135deg, #ffd700, #ffed4e); }
+.rank-silver { background: linear-gradient(135deg, #c0c0c0, #e8e8e8); }
+.rank-bronze { background: linear-gradient(135deg, #cd7f32, #e8a87c); }
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.you-badge {
+  padding: 0.25rem 0.75rem;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.my-entry {
+  background: rgba(99, 102, 241, 0.1) !important;
+}
+
+.accuracy-badge,
+.streak-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.accuracy-badge {
+  background: var(--bg-secondary);
+}
+
+.streak-badge {
+  background: #fee2e2;
+  color: #991b1b;
+}
+

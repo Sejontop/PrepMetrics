@@ -1,0 +1,198 @@
+/* src/components/layout/Navbar.css */
+.navbar {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* Slightly more space for a clean look */
+}
+
+/* Update this from font-size to height/width constraints */
+.logo-icon {
+  height: 40px;      /* Matches the height of your navbar items */
+  width: auto;       /* Maintains the aspect ratio of the logo */
+  object-fit: contain; 
+  display: block;    /* Removes extra whitespace below the image */
+}
+
+.navbar-menu {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.navbar-menu a {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid transparent;
+}
+
+.navbar-menu a:hover {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.theme-toggle {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  transform: rotate(180deg);
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text-primary);
+}
+/* Container for Login and Sign Up
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Adds space between the two buttons 
+}
+
+ Base style for both buttons to ensure they are the same size/shape 
+.btn-link, .btn-primary {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+ Style for Login (The "Outline" or Ghost button) 
+.btn-link {
+  color: var(--primary-color);
+  background: transparent;
+  border: 1px solid var(--primary-color);
+}
+
+.btn-link:hover {
+  background: rgba(var(--primary-rgb), 0.1); /* Light tint on hover 
+  text-decoration: none; /* Removes the underline you mentioned 
+}
+
+/* Style for Sign Up (The "Solid" Purple button) 
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+} */
+
+.auth-buttons {
+  display: flex;
+  background: var(--bg-secondary); /* Optional: subtle background for the toggle area */
+  padding: 4px;
+  border-radius: 8px;
+  gap: 5px;
+}
+
+/* The Base Button Style (Inactive) */
+.auth-btn {
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  border: none;
+}
+
+/* The Active Style (The Purple "Shift") */
+.auth-btn.active {
+  background: var(--primary-color); /* Your purple color */
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover effect for the inactive button */
+.auth-btn:not(.active):hover {
+  background: rgba(var(--primary-rgb), 0.1);
+  color: var(--primary-color);
+}
