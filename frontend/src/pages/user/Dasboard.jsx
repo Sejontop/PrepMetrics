@@ -124,28 +124,29 @@ const Dashboard = () => {
           <Link to="/analytics" className="btn-link">View Analytics →</Link>
         </div>
         <div className="activity-list">
-          {recentQuizzes.map((quiz) => (
-            <div key={quiz._id} className="activity-item">
-              <div className="activity-icon">📊</div>
-              <div className="activity-content">
-                <h4>{quiz.subject.name}</h4>
-                <p>
-                  Score: {quiz.results.marksObtained}/{quiz.results.totalMarks} • 
-                  Accuracy: {quiz.results.accuracy}%
-                </p>
-                <span className="activity-date">
-                  {new Date(quiz.completedAt).toLocaleDateString()}
-                </span>
-              </div>
-              <Link 
-                to={`/quiz/${quiz._id}/results`} 
-                className="btn-view"
-              >
-                View Details
-              </Link>
-            </div>
-          ))}
-        </div>
+  {(recentQuizzes || []).map((quiz) => (
+    <div key={quiz._id} className="activity-item">
+      <div className="activity-icon">📊</div>
+      <div className="activity-content">
+        <h4>{quiz.subject.name}</h4>
+        <p>
+          Score: {quiz.results.marksObtained}/{quiz.results.totalMarks} • 
+          Accuracy: {quiz.results.accuracy}%
+        </p>
+        <span className="activity-date">
+          {new Date(quiz.completedAt).toLocaleDateString()}
+        </span>
+      </div>
+      <Link 
+        to={`/quiz/${quiz._id}/results`} 
+        className="btn-view"
+      >
+        View Details
+      </Link>
+    </div>
+  ))}
+</div>
+
       </div>
 
       {/* Weekly Activity Chart */}

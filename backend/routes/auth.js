@@ -4,7 +4,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { protect } = require('../middleware/auth');
-
+require('dotenv').config();
 // Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -55,6 +55,7 @@ router.post('/register', async (req, res) => {
 // @desc    Login user
 // @access  Public
 router.post('/login', async (req, res) => {
+  console.log('Request body:', req.body);
   try {
     const { email, password } = req.body;
 
@@ -155,6 +156,9 @@ router.put('/change-password', protect, async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
+});
+router.get('/test', (req, res) => {
+  res.json({ success: true, message: 'Auth route works!' });
 });
 
 module.exports = router;

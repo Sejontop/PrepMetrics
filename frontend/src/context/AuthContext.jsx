@@ -1,9 +1,7 @@
 // src/context/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-
 const AuthContext = createContext();
-
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
@@ -22,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchCurrentUser = async () => {
     try {
-      const response = await axios.get('/api/auth/me');
+      const response = await axios.get('http://localhost:5000/api/auth/me');
       setUser(response.data.data);
     } catch (error) {
       console.error('Auth error:', error);
@@ -33,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const response = await axios.post('/api/auth/login', { email, password });
+    const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
     const { token, user } = response.data;
     
     localStorage.setItem('token', token);
@@ -45,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (name, email, password) => {
-    const response = await axios.post('/api/auth/register', { name, email, password });
+    const response = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
     const { token, user } = response.data;
     
     localStorage.setItem('token', token);
@@ -64,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateProfile = async (data) => {
-    const response = await axios.put('/api/auth/update-profile', data);
+    const response = await axios.put('http://localhost:5000/api/auth/update-profile', data);
     setUser(response.data.data);
     return response.data;
   };

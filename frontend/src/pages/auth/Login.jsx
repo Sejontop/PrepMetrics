@@ -12,7 +12,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { login , isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -22,20 +22,39 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
 
-    try {
-      await login(formData.email, formData.password);
-      navigate('/');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
+  setLoading(true);
+
+  try {
+    const data=await login(formData.email, formData.password);
+
+    // Redirect based on role
+    if (data.user.role === 'admin') {
+      navigate('/admin');  // your admin dashboard route
+    } else {
+      navigate('/');       // normal user dashboard
     }
-  };
+
+  } catch (err) {
+    setError(err.response?.data?.message || 'Login failed. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  //   try {
+  //     await login(formData.email, formData.password); 
+  //     navigate('/');
+  //   } catch (err) {
+  //     setError(err.response?.data?.message || 'Login failed. Please try again.');
+  //   } finally {
+  //     setLoading(false); 
+  //   } 
+  // };
 
   return (
     <div className="auth-container">

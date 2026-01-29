@@ -7,6 +7,7 @@ const Subject = require('../models/Subject');
 const Topic = require('../models/Topic');
 const Question = require('../models/Question');
 
+
 const seedDatabase = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -18,12 +19,12 @@ const seedDatabase = async () => {
     await Topic.deleteMany({});
     await Question.deleteMany({});
     console.log('Cleared existing data');
-
+    
     // Create admin user
     const admin = await User.create({
       name: 'Admin User',
       email: process.env.ADMIN_EMAIL || 'admin@prepmetrics.com',
-      password: process.env.ADMIN_PASSWORD || 'Admin@123',
+      password: process.env.ADMIN_PASSWORD||'Admin@123' ,
       role: 'admin'
     });
     console.log('Admin user created');
