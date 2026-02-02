@@ -14,7 +14,7 @@ const Certificates = () => {
 
   const fetchCertificates = async () => {
     try {
-      const response = await axios.get('/api/certificates/my-certificates');
+      const response = await axios.get('/certificates/my-certificates');
       setCertificates(response.data.data);
     } catch (error) {
       console.error('Error fetching certificates:', error);
@@ -25,7 +25,7 @@ const Certificates = () => {
 
   const handleGenerateCertificate = async (subjectId) => {
     try {
-      await axios.post(`/api/certificates/generate/${subjectId}`);
+      await axios.post(`/certificates/generate/${subjectId}`);
       alert('Certificate generated successfully!');
       fetchCertificates();
     } catch (error) {

@@ -15,7 +15,7 @@ const Analytics = () => {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await axios.get('/api/analytics/dashboard');
+      const response = await axios.get('/analytics/dashboard');
       setAnalyticsData(response.data.data);
     } catch (error) {
       console.error('Error fetching analytics:', error);
@@ -222,7 +222,9 @@ const Analytics = () => {
           ))}
         </div>
       </div>
+      
 
+      
       {/* Time Analysis */}
       <div className="time-analysis-section">
         <h2>Time Analysis</h2>
@@ -334,4 +336,5 @@ const getReadinessClass = (score) => {
 };
 
 export default Analytics;
+
 

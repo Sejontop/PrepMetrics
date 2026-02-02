@@ -139,7 +139,9 @@
 .rank-badge {
   font-size: 1.5rem;
 }
-
+.my-entry {
+  background: rgba(99, 102, 241, 0.1) ;
+}
 .rank-gold { background: linear-gradient(135deg, #ffd700, #ffed4e); }
 .rank-silver { background: linear-gradient(135deg, #c0c0c0, #e8e8e8); }
 .rank-bronze { background: linear-gradient(135deg, #cd7f32, #e8a87c); }
@@ -171,9 +173,6 @@
   font-weight: 600;
 }
 
-.my-entry {
-  background: rgba(99, 102, 241, 0.1) !important;
-}
 
 .accuracy-badge,
 .streak-badge {

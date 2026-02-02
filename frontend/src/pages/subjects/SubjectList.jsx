@@ -16,9 +16,13 @@ const SubjectList = () => {
 
   const fetchSubjects = async () => {
     try {
-      const response = await axios.get('/api/subjects');
-      setSubjects(response.data.data);
-      setGroupedSubjects(response.data.grouped);
+      // Backend se data lane ke liye full URL use kiya hai
+      const response = await axios.get('http://localhost:5000/api/subjects');
+      
+      if (response.data.success) {
+        setSubjects(response.data.data);
+        setGroupedSubjects(response.data.grouped);
+      }
     } catch (error) {
       console.error('Error fetching subjects:', error);
     } finally {
@@ -33,7 +37,12 @@ const SubjectList = () => {
     : groupedSubjects[selectedCategory] || [];
 
   if (loading) {
-    return <div className="loading">Loading subjects...</div>;
+    return (
+      <div className="loading-container" style={{ textAlign: 'center', padding: '50px' }}>
+        <div className="loader"></div>
+        <p>Loading subjects...</p>
+      </div>
+    );
   }
 
   return (
@@ -43,7 +52,6 @@ const SubjectList = () => {
         <p>Choose a subject to start your preparation journey</p>
       </div>
 
-      {/* Category Filter */}
       <div className="category-filter">
         <button
           className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
@@ -62,7 +70,6 @@ const SubjectList = () => {
         ))}
       </div>
 
-      {/* Subjects Grid */}
       <div className="subjects-grid">
         {filteredSubjects.length === 0 ? (
           <div className="no-subjects">
@@ -93,21 +100,9 @@ const SubjectList = () => {
                   </div>
                 </div>
 
-                {subject.stats?.averageScore > 0 && (
-                  <div className="subject-performance">
-                    <span className="performance-label">Avg Score:</span>
-                    <div className="performance-bar-small">
-                      <div 
-                        className="performance-fill-small"
-                        style={{ width: `${subject.stats.averageScore}%` }}
-                      />
-                    </div>
-                    <span className="performance-value">{subject.stats.averageScore.toFixed(0)}%</span>
-                  </div>
-                )}
-
+                {/* MODIFIED: Link now uses subject._id instead of slug */}
                 <Link 
-                  to={`/quiz/setup/${subject.slug}`}
+                  to={`/quiz/setup/${subject._id}`}
                   className="btn-start-subject"
                 >
                   Start Practice →
@@ -118,20 +113,17 @@ const SubjectList = () => {
         )}
       </div>
 
-      {/* Info Section */}
       <div className="info-section">
         <div className="info-card">
           <span className="info-icon-large">🎯</span>
           <h3>Interview-Ready Questions</h3>
           <p>Practice with real interview questions used by top companies</p>
         </div>
-
         <div className="info-card">
           <span className="info-icon-large">📊</span>
           <h3>Detailed Analytics</h3>
           <p>Track your progress with comprehensive performance insights</p>
         </div>
-
         <div className="info-card">
           <span className="info-icon-large">🏆</span>
           <h3>Earn Certificates</h3>

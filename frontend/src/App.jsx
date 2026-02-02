@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
@@ -12,7 +11,7 @@ import AdminRoute from './components/auth/AdminRoute';
 // Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import Dashboard from './pages/user/Dasboard';
+import Dashboard from './pages/user/Dasboard'; // Ensure spelling matches your filename
 import SubjectList from './pages/subjects/SubjectList';
 import QuizSetup from './pages/quiz/QuizSetup';
 import QuizInterface from './pages/quiz/QuizInterface';

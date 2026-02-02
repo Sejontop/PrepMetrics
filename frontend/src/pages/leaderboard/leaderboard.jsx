@@ -27,7 +27,7 @@ const Leaderboard = () => {
 
   const fetchSubjects = async () => {
     try {
-      const response = await axios.get('/api/subjects');
+      const response = await axios.get('/subjects');
       setSubjects(response.data.data);
     } catch (error) {
       console.error('Error fetching subjects:', error);
@@ -38,8 +38,8 @@ const Leaderboard = () => {
     setLoading(true);
     try {
       const url = selectedSubject === 'global' 
-        ? `/api/leaderboard/global?page=${page}&limit=50`
-        : `/api/leaderboard/subject/${selectedSubject}?page=${page}&limit=50`;
+        ? `/leaderboard/global?page=${page}&limit=50`
+        : `/leaderboard/subject/${selectedSubject}?page=${page}&limit=50`;
       
       const response = await axios.get(url);
       setLeaderboardData(response.data.data);
@@ -56,7 +56,7 @@ const Leaderboard = () => {
 
   const fetchMyRank = async () => {
     try {
-      const response = await axios.get('/api/leaderboard/my-rank');
+      const response = await axios.get('/leaderboard/my-rank');
       setMyRank(response.data.data);
     } catch (error) {
       console.error('Error fetching rank:', error);

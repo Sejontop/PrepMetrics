@@ -31,7 +31,7 @@ const Profile = () => {
 
   const fetchUserStats = async () => {
     try {
-      const response = await axios.get('/api/users/stats');
+      const response = await axios.get('/users/stats');
       setStats(response.data.data);
     } catch (error) {
       console.error('Error fetching stats:', error);

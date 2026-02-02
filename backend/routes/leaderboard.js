@@ -1,5 +1,6 @@
-// routes/leaderboard.js
+// backend/routes/leaderboard.js
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const User = require('../models/User');
 const Quiz = require('../models/Quiz');
@@ -8,27 +9,33 @@ const { protect } = require('../middleware/auth');
 // @route   GET /api/leaderboard/global
 // @desc    Get global leaderboard
 // @access  Public
+
 router.get('/global', async (req, res) => {
   try {
     const { limit = 50, page = 1 } = req.query;
 
-    const leaderboard = await User.aggregate([
+    const leaderboard = await Quiz.aggregate([
+      { $match: { status: 'completed' } },
+
       {
-        $project: {
-          name: 1,
-          email: 1,
-          'profile.avatar': 1,
-          'profile.totalQuizzesTaken': 1,
-          'profile.totalCorrectAnswers': 1,
-          'profile.totalQuestionsAttempted': 1,
-          'profile.currentStreak': 1,
-          overallScore: {
+        $group: {
+          _id: '$user',
+          quizzesTaken: { $sum: 1 },
+          totalCorrect: { $sum: '$results.correctAnswers' },
+          totalQuestions: { $sum: '$results.totalQuestions' },
+          lastQuizDate: { $max: '$completedAt' }
+        }
+      },
+
+      {
+        $addFields: {
+          accuracy: {
             $cond: [
-              { $gt: ['$profile.totalQuestionsAttempted', 0] },
+              { $gt: ['$totalQuestions', 0] },
               {
-                $multiply: [
-                  { $divide: ['$profile.totalCorrectAnswers', '$profile.totalQuestionsAttempted'] },
-                  100
+                $round: [
+                  { $multiply: [{ $divide: ['$totalCorrect', '$totalQuestions'] }, 100] },
+                  2
                 ]
               },
               0
@@ -36,37 +43,109 @@ router.get('/global', async (req, res) => {
           }
         }
       },
-      { $sort: { overallScore: -1, 'profile.totalQuizzesTaken': -1 } },
+
+      { $sort: { accuracy: -1, quizzesTaken: -1 } },
+
       { $skip: (page - 1) * limit },
-      { $limit: parseInt(limit) }
+      { $limit: parseInt(limit) },
+
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      { $unwind: '$user' }
     ]);
 
-    const total = await User.countDocuments();
+    const totalUsers = await Quiz.distinct('user', { status: 'completed' });
 
-    // Add rank
-    const rankedLeaderboard = leaderboard.map((user, index) => ({
+    const ranked = leaderboard.map((u, index) => ({
       rank: (page - 1) * limit + index + 1,
-      name: user.name,
-      avatar: user.profile?.avatar,
-      quizzesTaken: user.profile?.totalQuizzesTaken || 0,
-      accuracy: user.overallScore.toFixed(2),
-      currentStreak: user.profile?.currentStreak || 0
+      name: u.user.name,
+      quizzesTaken: u.quizzesTaken,
+      accuracy: u.accuracy,
+      currentStreak: 0 // (we’ll fix streak next)
     }));
 
     res.json({
       success: true,
-      data: rankedLeaderboard,
+      data: ranked,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
+        page: Number(page),
+        limit: Number(limit),
+        total: totalUsers.length,
+        pages: Math.ceil(totalUsers.length / limit)
       }
     });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+
+// router.get('/global', async (req, res) => {
+//   try {
+//     const { limit = 50, page = 1 } = req.query;
+
+//     const leaderboard = await User.aggregate([
+//       {
+//         $project: {
+//           name: 1,
+//           email: 1,
+//           'profile.avatar': 1,
+//           'profile.totalQuizzesTaken': 1,
+//           'profile.totalCorrectAnswers': 1,
+//           'profile.totalQuestionsAttempted': 1,
+//           'profile.currentStreak': 1,
+//           overallScore: {
+//             $cond: [
+//               { $gt: ['$profile.totalQuestionsAttempted', 0] },
+//               {
+//                 $multiply: [
+//                   { $divide: ['$profile.totalCorrectAnswers', '$profile.totalQuestionsAttempted'] },
+//                   100
+//                 ]
+//               },
+//               0
+//             ]
+//           }
+//         }
+//       },
+//       { $sort: { overallScore: -1, 'profile.totalQuizzesTaken': -1 } },
+//       { $skip: (page - 1) * limit },
+//       { $limit: parseInt(limit) }
+//     ]);
+
+//     const total = await User.countDocuments();
+
+//     // Add rank
+//     const rankedLeaderboard = leaderboard.map((user, index) => ({
+//       rank: (page - 1) * limit + index + 1,
+//       name: user.name,
+//       avatar: user.profile?.avatar,
+//       quizzesTaken: user.profile?.totalQuizzesTaken || 0,
+//       accuracy: user.overallScore.toFixed(2),
+//       currentStreak: user.profile?.currentStreak || 0
+//     }));
+
+//     res.json({
+//       success: true,
+//       data: rankedLeaderboard,
+//       pagination: {
+//         page: parseInt(page),
+//         limit: parseInt(limit),
+//         total,
+//         pages: Math.ceil(total / limit)
+//       }
+//     });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// });
 
 // @route   GET /api/leaderboard/subject/:subjectId
 // @desc    Get subject-specific leaderboard
@@ -76,39 +155,110 @@ router.get('/subject/:subjectId', async (req, res) => {
     const { subjectId } = req.params;
     const { limit = 50, page = 1 } = req.query;
 
-    const leaderboard = await User.aggregate([
-      { $unwind: '$subjectProgress' },
-      { $match: { 'subjectProgress.subject': mongoose.Types.ObjectId(subjectId) } },
+    const leaderboard = await Quiz.aggregate([
       {
-        $project: {
-          name: 1,
-          'profile.avatar': 1,
-          quizzesCompleted: '$subjectProgress.quizzesCompleted',
-          averageAccuracy: '$subjectProgress.averageAccuracy',
-          interviewReadiness: '$subjectProgress.interviewReadinessScore',
-          totalScore: '$subjectProgress.totalScore'
+        $match: {
+          status: 'completed',
+          subject: new mongoose.Types.ObjectId(subjectId)
         }
       },
-      { $sort: { totalScore: -1, averageAccuracy: -1 } },
+
+      {
+        $group: {
+          _id: '$user',
+          quizzesCompleted: { $sum: 1 },
+          totalCorrect: { $sum: '$results.correctAnswers' },
+          totalQuestions: { $sum: '$results.totalQuestions' },
+          totalScore: { $sum: '$results.marksObtained' }
+        }
+      },
+
+      {
+        $addFields: {
+          accuracy: {
+            $cond: [
+              { $gt: ['$totalQuestions', 0] },
+              {
+                $round: [
+                  { $multiply: [{ $divide: ['$totalCorrect', '$totalQuestions'] }, 100] },
+                  2
+                ]
+              },
+              0
+            ]
+          }
+        }
+      },
+
+      { $sort: { totalScore: -1, accuracy: -1 } },
+
       { $skip: (page - 1) * limit },
-      { $limit: parseInt(limit) }
+      { $limit: parseInt(limit) },
+
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      { $unwind: '$user' }
     ]);
 
-    const rankedLeaderboard = leaderboard.map((user, index) => ({
+    const ranked = leaderboard.map((u, index) => ({
       rank: (page - 1) * limit + index + 1,
-      name: user.name,
-      avatar: user.profile?.avatar,
-      quizzesCompleted: user.quizzesCompleted,
-      accuracy: user.averageAccuracy.toFixed(2),
-      interviewReadiness: user.interviewReadiness,
-      totalScore: user.totalScore
+      name: u.user.name,
+      quizzesCompleted: u.quizzesCompleted,
+      accuracy: u.accuracy,
+      totalScore: u.totalScore
     }));
 
-    res.json({ success: true, data: rankedLeaderboard });
+    res.json({ success: true, data: ranked });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// router.get('/subject/:subjectId', async (req, res) => {
+//   try {
+//     const { subjectId } = req.params;
+//     const { limit = 50, page = 1 } = req.query;
+
+//     const leaderboard = await User.aggregate([
+//       { $unwind: '$subjectProgress' },
+//       { $match: { 'subjectProgress.subject': mongoose.Types.ObjectId(subjectId) } },
+//       {
+//         $project: {
+//           name: 1,
+//           'profile.avatar': 1,
+//           quizzesCompleted: '$subjectProgress.quizzesCompleted',
+//           averageAccuracy: '$subjectProgress.averageAccuracy',
+//           interviewReadiness: '$subjectProgress.interviewReadinessScore',
+//           totalScore: '$subjectProgress.totalScore'
+//         }
+//       },
+//       { $sort: { totalScore: -1, averageAccuracy: -1 } },
+//       { $skip: (page - 1) * limit },
+//       { $limit: parseInt(limit) }
+//     ]);
+
+//     const rankedLeaderboard = leaderboard.map((user, index) => ({
+//       rank: (page - 1) * limit + index + 1,
+//       name: user.name,
+//       avatar: user.profile?.avatar,
+//       quizzesCompleted: user.quizzesCompleted,
+//       accuracy: user.averageAccuracy.toFixed(2),
+//       interviewReadiness: user.interviewReadiness,
+//       totalScore: user.totalScore
+//     }));
+
+//     res.json({ success: true, data: rankedLeaderboard });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// });
 
 // @route   GET /api/leaderboard/my-rank
 // @desc    Get current user's rank
@@ -117,41 +267,84 @@ router.get('/my-rank', protect, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Calculate user's position in global leaderboard
-    const allUsers = await User.aggregate([
+    const all = await Quiz.aggregate([
+      { $match: { status: 'completed' } },
       {
-        $project: {
-          _id: 1,
-          overallScore: {
+        $group: {
+          _id: '$user',
+          totalCorrect: { $sum: '$results.correctAnswers' },
+          totalQuestions: { $sum: '$results.totalQuestions' }
+        }
+      },
+      {
+        $addFields: {
+          accuracy: {
             $cond: [
-              { $gt: ['$profile.totalQuestionsAttempted', 0] },
-              {
-                $multiply: [
-                  { $divide: ['$profile.totalCorrectAnswers', '$profile.totalQuestionsAttempted'] },
-                  100
-                ]
-              },
+              { $gt: ['$totalQuestions', 0] },
+              { $multiply: [{ $divide: ['$totalCorrect', '$totalQuestions'] }, 100] },
               0
             ]
           }
         }
       },
-      { $sort: { overallScore: -1 } }
+      { $sort: { accuracy: -1 } }
     ]);
 
-    const rank = allUsers.findIndex(u => u._id.toString() === userId) + 1;
+    const rank = all.findIndex(u => u._id.toString() === userId) + 1;
 
     res.json({
       success: true,
       data: {
         globalRank: rank,
-        totalUsers: allUsers.length,
-        percentile: ((1 - (rank / allUsers.length)) * 100).toFixed(2)
+        totalUsers: all.length,
+        percentile: ((1 - rank / all.length) * 100).toFixed(2)
       }
     });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// router.get('/my-rank', protect, async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+
+//     // Calculate user's position in global leaderboard
+//     const allUsers = await User.aggregate([
+//       {
+//         $project: {
+//           _id: 1,
+//           overallScore: {
+//             $cond: [
+//               { $gt: ['$profile.totalQuestionsAttempted', 0] },
+//               {
+//                 $multiply: [
+//                   { $divide: ['$profile.totalCorrectAnswers', '$profile.totalQuestionsAttempted'] },
+//                   100
+//                 ]
+//               },
+//               0
+//             ]
+//           }
+//         }
+//       },
+//       { $sort: { overallScore: -1 } }
+//     ]);
+
+//     const rank = allUsers.findIndex(u => u._id.toString() === userId) + 1;
+
+//     res.json({
+//       success: true,
+//       data: {
+//         globalRank: rank,
+//         totalUsers: allUsers.length,
+//         percentile: ((1 - (rank / allUsers.length)) * 100).toFixed(2)
+//       }
+//     });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// });
 
 module.exports = router;

@@ -1,11 +1,12 @@
-// src/pages/quiz/QuizSetup.js
+// src/pages/quiz/QuizSetup.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './QuizSetup.css';
 
 const QuizSetup = () => {
-  const { subjectId } = useParams();
+  // Aapke code mein 'subjectId' tha, lekin Link mein slug use ho raha hai
+  const { subjectId } = useParams(); 
   const navigate = useNavigate();
   
   const [subject, setSubject] = useState(null);
@@ -24,10 +25,12 @@ const QuizSetup = () => {
 
   const fetchSubjectData = async () => {
     try {
+      // CORRECTED: Added full backend URL (http://localhost:5000)
       const [subjectRes, topicsRes] = await Promise.all([
-        axios.get(`/api/subjects/${subjectId}`),
-        axios.get(`/api/topics?subject=${subjectId}`)
+        axios.get(`http://localhost:5000/api/subjects/${subjectId}`),
+        axios.get(`http://localhost:5000/api/topics?subject=${subjectId}`)
       ]);
+      
       setSubject(subjectRes.data.data);
       setTopics(topicsRes.data.data);
     } catch (error) {
@@ -47,20 +50,24 @@ const QuizSetup = () => {
   const handleStartQuiz = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('/api/quizzes/generate', {
+      // CORRECTED: Added full backend URL for quiz generation
+      const response = await axios.post('http://localhost:5000/api/quizzes/generate', {
         subjectId: subject._id,
         ...config
       });
-      navigate(`/quiz/${response.data.data._id}`);
+      
+      if (response.data.success) {
+        navigate(`/quiz/${response.data.data._id}`);
+      }
     } catch (error) {
       console.error('Error generating quiz:', error);
-      alert('Failed to generate quiz. Please try again.');
+      alert('Failed to generate quiz. Check if questions exist for this subject.');
     } finally {
       setLoading(false);
     }
   };
 
-  if (!subject) return <div className="loading">Loading...</div>;
+  if (!subject) return <div className="loading" style={{ textAlign: 'center', marginTop: '50px' }}>Loading Quiz Settings...</div>;
 
   return (
     <div className="quiz-setup">
