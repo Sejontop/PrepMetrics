@@ -1,0 +1,15 @@
+const router = require('express').Router();
+const { protect, authorize } = require('../middleware/auth');
+const ctrl = require('../controllers/adminController');
+const m = [protect, authorize('admin')];
+router.get('/users',               ...m, ctrl.getAllUsers);
+router.put('/users/:id/toggle',    ...m, ctrl.toggleUserActive);
+router.post('/subjects',           ...m, ctrl.createSubject);
+router.put('/subjects/:id',        ...m, ctrl.updateSubject);
+router.delete('/subjects/:id',     ...m, ctrl.deleteSubject);
+router.post('/topics',             ...m, ctrl.createTopic);
+router.get('/questions',           ...m, ctrl.getQuestions);
+router.post('/questions',          ...m, ctrl.createQuestion);
+router.put('/questions/:id',       ...m, ctrl.updateQuestion);
+router.delete('/questions/:id',    ...m, ctrl.deleteQuestion);
+module.exports = router;
