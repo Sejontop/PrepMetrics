@@ -1,0 +1,21 @@
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+@media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+.card-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+.trend-card, .readiness-card { padding: 22px; }
+.readiness-list { display: flex; flex-direction: column; gap: 12px; }
+.readiness-row { display: flex; align-items: center; justify-content: space-between; }
+.readiness-subject { font-size: 13px; font-weight: 600; }
+
+.quick-start { padding: 22px; }
+.subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.subject-chip {
+  display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+  border-radius: 8px; border: 1.5px solid var(--border); background: var(--bg);
+  cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text);
+  transition: all .15s;
+}
+.subject-chip:hover { border-color: var(--chip-color); color: var(--chip-color); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+.empty-state { text-align: center; color: var(--text-light); font-size: 13px; padding: 24px 0; }

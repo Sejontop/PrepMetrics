@@ -1,0 +1,15 @@
+.app-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  position: sticky; top: 0; z-index: 10;
+}
+.streak-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--pm-orange);
+  background: #fff7ed; padding: 4px 12px; border-radius: 999px;
+  border: 1px solid #fed7aa;
+}
+[data-theme="dark"] .streak-badge { background: #431407; border-color: #9a3412; }
+.theme-toggle { font-size: 18px; padding: 6px 10px; border-radius: 8px; }

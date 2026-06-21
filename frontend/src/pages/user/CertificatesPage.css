@@ -1,0 +1,10 @@
+.certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.cert-card { padding: 22px; border-top: 4px solid var(--cc); transition: transform .15s, box-shadow .15s; }
+.cert-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.cert-card.earned { border-top-color: var(--pm-green); }
+.cert-icon { font-size: 32px; margin-bottom: 12px; }
+.cert-subject { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.cert-id { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); margin-bottom: 4px; }
+.cert-score { font-size: 13px; font-weight: 600; color: var(--pm-indigo); margin-bottom: 6px; }
+.cert-earned { font-size: 12px; font-weight: 700; color: var(--pm-green); }
+.cert-check-btn { margin-top: 8px; width: 100%; justify-content: center; }

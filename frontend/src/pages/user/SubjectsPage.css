@@ -1,0 +1,25 @@
+.subjects-layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+@media (max-width: 900px) { .subjects-layout { grid-template-columns: 1fr; } }
+
+.subjects-list { display: flex; flex-direction: column; gap: 8px; }
+.subject-card {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer;
+  transition: all .15s; border-left: 3px solid transparent;
+}
+.subject-card:hover { border-left-color: var(--sc); transform: translateX(2px); }
+.subject-card.selected { border-left-color: var(--sc); background: color-mix(in srgb, var(--sc) 8%, var(--bg-card)); }
+.sc-icon { font-size: 20px; width: 36px; text-align: center; }
+.sc-body { flex: 1; }
+.sc-name { font-weight: 600; font-size: 14px; }
+.sc-quiz-count { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.sc-arrow { color: var(--text-light); font-size: 18px; }
+
+.subject-detail { display: flex; flex-direction: column; gap: 16px; }
+.sd-header { display: flex; align-items: center; gap: 16px; padding: 20px 22px; }
+.generator-card { padding: 22px; }
+.gen-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.form-group { margin-bottom: 0; }
+.form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
+
+.quiz-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 22px; border-bottom: 1px solid var(--border); }
+.quiz-row:last-child { border-bottom: none; }

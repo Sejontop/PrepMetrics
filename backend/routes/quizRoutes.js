@@ -1,0 +1,10 @@
+const router = require('express').Router();
+const { protect, authorize } = require('../middleware/auth');
+const ctrl = require('../controllers/quizController');
+router.get('/',        protect, ctrl.getQuizzes);
+router.post('/generate',  ctrl.generateQuiz);
+router.get('/:id',     protect, ctrl.getQuiz);
+router.post('/',       protect, authorize('admin'), ctrl.createQuiz);
+router.put('/:id',     protect, authorize('admin'), ctrl.updateQuiz);
+router.delete('/:id',  protect, authorize('admin'), ctrl.deleteQuiz);
+module.exports = router;
