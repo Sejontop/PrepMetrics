@@ -15,7 +15,7 @@ const QuestionResponseSchema = new mongoose.Schema({
 
 const AttemptSchema = new mongoose.Schema({
   user:         { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  quiz:         { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz', required: true },
+  quiz:         { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz' },
   subject:      { type: mongoose.Schema.Types.ObjectId, ref: 'Subject', required: true },
 
   responses:    [QuestionResponseSchema],

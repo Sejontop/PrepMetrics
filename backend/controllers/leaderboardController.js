@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Attempt = require('../models/Attempt');
 
 /**
@@ -39,7 +40,7 @@ exports.getGlobalLeaderboard = async (req, res) => {
 exports.getSubjectLeaderboard = async (req, res) => {
   try {
     const lb = await Attempt.aggregate([
-      { $match: { subject: require('mongoose').Types.ObjectId.createFromHexString(req.params.subjectId) } },
+      { $match: { subject: new mongoose.Types.ObjectId(req.params.subjectId) } },
       { $group: {
           _id:          '$user',
           avgScore:     { $avg: '$score' },

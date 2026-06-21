@@ -4,8 +4,8 @@ import StatCard from '../../components/common/StatCard';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { Bar } from 'react-chartjs-2';
-import { Chart, BarElement, LinearScale, CategoryScale, Tooltip } from 'chart.js';
-Chart.register(BarElement, LinearScale, CategoryScale, Tooltip);
+import { Chart, BarElement, LinearScale, CategoryScale, Tooltip, Legend } from 'chart.js';
+Chart.register(BarElement, LinearScale, CategoryScale, Tooltip, Legend);
 
 export default function AdminDashboard() {
   const [data, setData] = useState(null);

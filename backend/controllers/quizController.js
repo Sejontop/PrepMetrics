@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Quiz = require('../models/Quiz');
 const Question = require('../models/Question');
 
@@ -52,8 +53,8 @@ exports.generateQuiz = async (req, res) => {
     const { subjectId, topicId, difficulty, count = 10, isTimed = true } = req.body;
 
     const filter = { isActive: true };
-    if (subjectId)  filter.subject    = subjectId;
-    if (topicId)    filter.topic      = topicId;
+    if (subjectId)  filter.subject    = new mongoose.Types.ObjectId(subjectId);
+    if (topicId)    filter.topic      = new mongoose.Types.ObjectId(topicId);
     if (difficulty && difficulty !== 'mixed') filter.difficulty = difficulty;
 
     const questions = await Question.aggregate([

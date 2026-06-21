@@ -3,11 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
 import './QuizPage.css';
 
 export default function QuizPage() {
   const { quizId } = useParams();
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
   const [quiz, setQuiz] = useState(null);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -76,6 +78,8 @@ export default function QuizPage() {
         responses: responses.filter(r => r.selectedOption !== null),
         timeTakenSec: totalTime,
       });
+
+      await refreshUser();
 
       if (quiz._isGenerated) sessionStorage.removeItem('pm_generated_quiz');
       navigate(`/attempts/${data.data._id}`);

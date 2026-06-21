@@ -27,8 +27,10 @@ const SUBJECTS = [
 ];
 
 const seed = async () => {
-  await mongoose.connect(process.env.MONGO_URI);
-  console.log('Connected to DB');
+  if (mongoose.connection.readyState !== 1) {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('Connected to DB');
+  }
 
   // Clear
   await Promise.all([User, Subject, Topic, Question, Quiz].map(M => M.deleteMany({})));
@@ -803,7 +805,13 @@ const seed = async () => {
   console.log('\n✅ Seed complete!');
   console.log('Admin:    admin@prepmetrics.io / admin123');
   console.log('Demo:     demo@prepmetrics.io  / demo1234');
-  await mongoose.disconnect();
+  if (require.main === module) {
+    await mongoose.disconnect();
+  }
 };
 
-seed().catch(e => { console.error(e); process.exit(1); });
+if (require.main === module) {
+  seed().catch(e => { console.error(e); process.exit(1); });
+}
+
+module.exports = seed;

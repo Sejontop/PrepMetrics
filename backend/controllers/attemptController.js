@@ -40,7 +40,9 @@ exports.submitAttempt = async (req, res) => {
       };
     }).filter(Boolean);
 
-    const score = Math.round((correctCount / detailedResponses.length) * 100);
+    const score = detailedResponses.length > 0
+      ? Math.round((correctCount / detailedResponses.length) * 100)
+      : 0;
     const quiz  = await Quiz.findById(quizId);
     const passed = score >= (quiz?.passingScore || 60);
 

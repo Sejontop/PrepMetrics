@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Attempt = require('../models/Attempt');
 const User = require('../models/User');
 
@@ -18,7 +19,7 @@ exports.getDashboard = async (req, res) => {
 
     // Subject-wise aggregation
     const subjectStats = await Attempt.aggregate([
-      { $match: { user: require('mongoose').Types.ObjectId.createFromHexString(userId) } },
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
       { $group: {
           _id: '$subject',
           avgScore:       { $avg: '$score' },
@@ -43,7 +44,7 @@ exports.getDashboard = async (req, res) => {
 
     // Difficulty distribution
     const difficultyStats = await Attempt.aggregate([
-      { $match: { user: require('mongoose').Types.ObjectId.createFromHexString(userId) } },
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
       { $unwind: '$responses' },
       { $group: {
           _id: '$responses.difficulty',
@@ -55,7 +56,7 @@ exports.getDashboard = async (req, res) => {
 
     // Topic-wise weak areas
     const topicStats = await Attempt.aggregate([
-      { $match: { user: require('mongoose').Types.ObjectId.createFromHexString(userId) } },
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
       { $unwind: '$responses' },
       { $group: {
           _id: '$responses.topic',

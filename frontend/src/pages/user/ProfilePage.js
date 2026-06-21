@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import PageHeader from '../../components/common/PageHeader';
 
 export default function ProfilePage() {
-  const { user, login } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [form, setForm] = useState({ name: user?.name || '' });
   const [saving, setSaving] = useState(false);
 
@@ -13,6 +13,7 @@ export default function ProfilePage() {
     setSaving(true);
     try {
       await api.put('/users/profile', form);
+      await refreshUser();
       toast.success('Profile updated');
     } catch { toast.error('Update failed'); }
     finally { setSaving(false); }
