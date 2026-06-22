@@ -37,12 +37,12 @@ app.use('/api/leaderboard', require('./routes/leaderboardRoutes'));
 app.use('/api/certificates',require('./routes/certificateRoutes'));
 app.use('/api/admin',       require('./routes/adminRoutes'));
 
-//Health check
-// app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
+// Health check
+app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
-// const listEndpoints = require('express-list-endpoints');
+const listEndpoints = require('express-list-endpoints');
 
-// console.log(listEndpoints(app));
+console.log(listEndpoints(app));
 
 // Global error handler
 app.use((err, req, res, next) => {

@@ -84,6 +84,19 @@ exports.forgotPassword = async (req, res) => {
     `;
 
     try {
+      if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
+        console.log('\n==================================================');
+        console.log('✉️ DEVELOPMENT MODE: SMTP is not configured.');
+        console.log('Use the link below to reset the password:');
+        console.log(resetUrl);
+        console.log('==================================================\n');
+
+        return res.json({
+          success: true,
+          message: 'Reset link generated! (Logged to backend server console for local development)',
+        });
+      }
+
       await sendEmail({
         email: user.email,
         subject: 'Password Reset Request',
@@ -95,10 +108,17 @@ exports.forgotPassword = async (req, res) => {
         message: 'Reset link sent to your email',
       });
     } catch (err) {
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save({ validateBeforeSave: false });
-      return res.status(500).json({ success: false, message: 'Email could not be sent' });
+      console.error('SMTP Email sending failed:', err);
+      console.log('\n==================================================');
+      console.log('✉️ FALLBACK: SMTP failed to send email.');
+      console.log('Use the link below to reset the password:');
+      console.log(resetUrl);
+      console.log('==================================================\n');
+
+      return res.json({
+        success: true,
+        message: 'SMTP failed to send, but reset link was logged to backend server console.',
+      });
     }
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
