@@ -18,6 +18,10 @@ const UserSchema = new mongoose.Schema({
   totalScore:      { type: Number, default: 0 },
   totalQuestions:  { type: Number, default: 0 },
 
+  // Password reset fields 
+  resetPasswordToken: { type: String, select: false },
+  resetPasswordExpire: { type: Date, select: false },
+
   isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 
@@ -40,6 +44,15 @@ UserSchema.methods.getSignedJwt = function() {
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE }
   );
+};
+
+// Generate reset password token 
+UserSchema.methods.getResetPasswordToken = function() {
+  const crypto = require('crypto');
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 minutes
+  return resetToken;
 };
 
 module.exports = mongoose.model('User', UserSchema);

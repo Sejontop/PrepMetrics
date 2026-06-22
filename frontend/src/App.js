@@ -27,6 +27,8 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminQuestions from './pages/admin/AdminQuestions';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminSubjects from './pages/admin/AdminSubjects';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -46,6 +48,8 @@ const AppRoutes = () => (
   <Routes>
     <Route path="/login"    element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
+    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+    <Route path="/reset-password/:token" element={<ResetPasswordPage />} /> 
 
     <Route path="/" element={<PrivateRoute><AppLayout /></PrivateRoute>}>
       <Route index element={<Navigate to="/dashboard" />} />

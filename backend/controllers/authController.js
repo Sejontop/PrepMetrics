@@ -1,5 +1,6 @@
 const User = require('../models/User');
-
+const sendEmail = require('../utils/sendEmail');
+const crypto = require('crypto');
 /**
  * @desc  Register new user
  * @route POST /api/auth/register
@@ -52,4 +53,101 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   const user = await User.findById(req.user.id);
   res.json({ success: true, data: user });
+};
+
+/**
+ * @desc  Forgot password - Send reset link
+ * @route POST /api/auth/forgot-password
+ */
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'No user found with this email' });
+    }
+
+    // Generate reset token
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    // Create reset URL
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+    const message = `
+      <h2>Password Reset Request</h2>
+      <p>You requested a password reset. Click the link below to reset your password:</p>
+      <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #4f46e5; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a>
+      <p>This link will expire in 30 minutes.</p>
+      <p>If you didn't request this, please ignore this email.</p>
+    `;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Password Reset Request',
+        message,
+      });
+
+      res.json({
+        success: true,
+        message: 'Reset link sent to your email',
+      });
+    } catch (err) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+      return res.status(500).json({ success: false, message: 'Email could not be sent' });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/**
+ * @desc  Reset password using token
+ * @route PUT /api/auth/reset-password/:resetToken
+ */
+exports.resetPassword = async (req, res) => {
+  try {
+    const { resetToken } = req.params;
+    const { password, passwordConfirm } = req.body;
+
+    if (!password || !passwordConfirm) {
+      return res.status(400).json({ success: false, message: 'Please provide password' });
+    }
+
+    if (password !== passwordConfirm) {
+      return res.status(400).json({ success: false, message: 'Passwords do not match' });
+    }
+
+    // Hash token to match database
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    }).select('+resetPasswordToken +resetPasswordExpire');
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
+    }
+
+    // Update password
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    const token = user.getSignedJwt();
+    res.json({
+      success: true,
+      message: 'Password reset successfully',
+      token,
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };
